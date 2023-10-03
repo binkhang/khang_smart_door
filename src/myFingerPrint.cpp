@@ -33,7 +33,7 @@ void FingerPrint::scanFinger(){
   //check if dont have any fingerprint data
   // finger.getTemplateCount();
   // if (finger.templateCount == 0){
-  //   // Serial.println("There are no fingerprint");
+    // Serial.println("There are no fingerprint");
   //   return;
   // }
   int status = -1;
@@ -41,14 +41,14 @@ void FingerPrint::scanFinger(){
   status = finger.getImage();
   if (status == FINGERPRINT_NOFINGER) {return;}
   else if(status != FINGERPRINT_OK) { 
-    Serial.print("Your FingerPrint module has an issue at first stage (get image) , issue code: 0x0"); Serial.println(status);
+    Serial.print("Your FingerPrint module has an issue at first stage of scanFinger (get image) , issue code: 0x0"); Serial.println(status);
     return;
   }
 
   //second stage: convert image
   status = finger.image2Tz();
   if (status != FINGERPRINT_OK){
-    Serial.print("Your FingerPrint module has an issue at second stage (convert image) , issue code: 0x0"); Serial.println(status);
+    Serial.print("Your FingerPrint module has an issue at second stage of scanFinger (convert image) , issue code: 0x0"); Serial.println(status);
     return;
   }
   
@@ -85,7 +85,7 @@ bool FingerPrint::enroll(uint8_t id){
         else if (status == FINGERPRINT_NOFINGER) { 
         }
         else{
-          Serial.print("Your FingerPrint module has an issue at first stage (get image) , issue code: 0x0");
+          Serial.print("Your FingerPrint module has an issue at first stage of enroll (get image) , issue code: 0x0");
           Serial.println(status);
           return 0;
         }
@@ -101,7 +101,7 @@ bool FingerPrint::enroll(uint8_t id){
   status = finger.image2Tz(1);
   if (status != FINGERPRINT_OK)
   {
-    Serial.print("Your FingerPrint module has an issue at first stage (convert image) , issue code: 0x0");
+    Serial.print("Your FingerPrint module has an issue at first stage of enroll (convert image) , issue code: 0x0");
         Serial.println(status);
         return false;
   }
@@ -112,7 +112,7 @@ bool FingerPrint::enroll(uint8_t id){
     Serial.println("Remove your finger");
     status = finger.getImage();
   }
-
+  delay(1000);
 
   //second stage: get image
   startTime = millis();
@@ -127,7 +127,7 @@ bool FingerPrint::enroll(uint8_t id){
         }
         else if (status == FINGERPRINT_NOFINGER) {}
         else{
-          Serial.print("Your FingerPrint module has an issue at second stage (get image) , issue code: 0x0");
+          Serial.print("Your FingerPrint module has an issue at second stage of enroll (get image) , issue code: 0x0");
           Serial.println(status);
           return false;
         }
@@ -142,7 +142,7 @@ bool FingerPrint::enroll(uint8_t id){
   status = finger.image2Tz(2);
   if (status != FINGERPRINT_OK)
   {
-    Serial.print("Your FingerPrint module has an issue at second stage (convert image) , issue code: 0x0");
+    Serial.print("Your FingerPrint module has an issue at second stage of enroll (convert image) , issue code: 0x0");
     Serial.println(status);
     return false;
   }
@@ -158,7 +158,7 @@ bool FingerPrint::enroll(uint8_t id){
   }
   else if (status != FINGERPRINT_OK)
   {
-    Serial.print("Your FingerPrint module has an issue at third stage (create model) , issue code: 0x0");
+    Serial.print("Your FingerPrint module has an issue at third stage of enroll (create model) , issue code: 0x0");
     Serial.println(status);
     return false;
   }
@@ -169,7 +169,7 @@ bool FingerPrint::enroll(uint8_t id){
   status = finger.storeModel(id);
   if (status != FINGERPRINT_OK)
   {
-    Serial.print("Your FingerPrint module has an issue at third stage (save model) , issue code: 0x0");
+    Serial.print("Your FingerPrint module has an issue at third stage of enroll (save model) , issue code: 0x0");
     Serial.println(status);
     return false;
   }
@@ -183,7 +183,7 @@ bool FingerPrint::unEnroll(uint8_t id ){
   uint8_t status = -1;
   status = finger.deleteModel(id);
   Serial.print("Deleteting model #");Serial.println(id);
-  if(id != FINGERPRINT_OK)
+  if(status != FINGERPRINT_OK)
   {
     Serial.println("Failed to delete model");
     return false;
@@ -194,7 +194,7 @@ bool FingerPrint::unEnroll(uint8_t id ){
 }
 
 
-bool FingerPrint::debug(){
+bool FingerPrint::debugFinger(){
   // This method is used to check if number of template in eeprom not match with in sensor
 }
 
@@ -204,7 +204,12 @@ void FingerPrint::diagFingerPrint(){
   // This method will run on diag main function
 }
 
-bool FingerPrint::restore(){
+bool FingerPrint::restoreFinger(){
   //This method is used to delete all template (both eeprom and sensor)
+  Serial.println("Successfully delete all template");
   return finger.emptyDatabase() == FINGERPRINT_OK;  
+}
+
+void FingerPrint::queryFinger(){
+  // This medthod is used to query number of template
 }

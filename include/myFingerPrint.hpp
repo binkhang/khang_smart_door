@@ -22,9 +22,10 @@ public:
     bool enroll(uint8_t id);
     bool unEnroll(u_int8_t id);
     void getLog();
-    bool debug();
+    bool debugFinger();
     void diagFingerPrint();
-    bool restore();
+    bool restoreFinger();
+    void queryFinger();
 
 };
 #endif

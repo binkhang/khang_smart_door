@@ -21,30 +21,32 @@ void setup() {
 
 }
 void loop() {
-  int id;
-  while (1)
-  {
-    task = readNumber();
-    switch (task)
-    {
-    case 0:
-      myFingerPrint.scanFinger();
-      break;
-    case 1: 
-      id = readNumber();
-      myFingerPrint.enroll(id);
-      task = 0;
-      break;
-    case 2: 
-      id = readNumber();
-      myFingerPrint.unEnroll(id);
-      task = 0;
-      break;
-    default:
-      break;
-    }
-  }
+  int id = 0;
+  myFingerPrint.scanFinger();
+  delay(50);
 
+  task = readNumber();
+  switch (task)
+  {
+  case 1: 
+    while(id == 0){
+      id = readNumber();
+    }
+    myFingerPrint.enroll(id);
+    task = 0;
+    break;
+  case 2: 
+    while(id == 0){
+      id = readNumber();
+    }
+    myFingerPrint.unEnroll(id);
+    task = 0;
+    break;
+  case 3:
+    myFingerPrint.restoreFinger();
+    task = 0;
+    break;
+  }
 }
 
 void Log(String log){
@@ -54,9 +56,8 @@ void Log(String log){
 uint8_t readNumber()
 {
     uint8_t num = 0;
-    if (Serial.available()){
-      num = Serial.parseInt();
-    }
+    if (Serial.available())
+        num = Serial.parseInt();
     return num;
 }
 
