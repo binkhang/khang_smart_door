@@ -21,6 +21,7 @@ void setup() {
   }
 
   myFingerPrint.begin(57600);
+  myRFID.begin();
 
 }
 void loop() {
