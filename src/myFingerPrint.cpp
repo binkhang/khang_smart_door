@@ -204,7 +204,7 @@ void FingerPrint::diagFingerPrint(){
   // This method will run on diag main function
 }
 
-bool FingerPrint::restoreFinger(){
+bool FingerPrint::restore(){
   //This method is used to delete all template (both eeprom and sensor)
   Serial.println("Successfully delete all template");
   return finger.emptyDatabase() == FINGERPRINT_OK;  

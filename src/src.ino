@@ -2,12 +2,15 @@
 #include "SPIFFS.h"
 #include "myFingerPrint.hpp"
 #include "diag.hpp"
+#include "myRFID.hpp"
 
 
 //my FingerPrint
 FingerPrint myFingerPrint;
+// my RFID
+RFID myRFID;
 uint8_t errorCount = 0;
-int task = -1;
+int8_t task = -1;
 void setup() {
   Serial.begin(9600);
   
@@ -22,29 +25,51 @@ void setup() {
 }
 void loop() {
   int id = 0;
+  //run when task = -1
   myFingerPrint.scanFinger();
+  myRFID.scanRFID();
   delay(50);
 
   task = readNumber();
   switch (task)
   {
   case 1: 
+    Log("Enter ID of your fingerprint to enroll: ");
     while(id == 0){
       id = readNumber();
     }
     myFingerPrint.enroll(id);
-    task = 0;
+    task = -1;
     break;
   case 2: 
+    Log("Enter ID of your fingerprint to unenroll: ");
     while(id == 0){
       id = readNumber();
     }
     myFingerPrint.unEnroll(id);
-    task = 0;
+    task = -1;
     break;
   case 3:
-    myFingerPrint.restoreFinger();
-    task = 0;
+    myFingerPrint.restore();
+    task = -1;
+    break;
+  case 4: 
+    Log("Scan your RFID card to add new");
+    myRFID.addCard();
+    task = -1;
+    break;
+  case 5: 
+    Log("Scan your RFID card which you want to remove");
+    myRFID.removeCard();
+    task = -1;
+    break;
+  case 6: 
+    myRFID.printCardList();
+    task = -1;
+    break;
+  case 7:
+    myRFID.restore();
+    task = -1;
     break;
   }
 }
@@ -53,9 +78,9 @@ void Log(String log){
   Serial.println(log);
 }
 
-uint8_t readNumber()
+int readNumber()
 {
-    uint8_t num = 0;
+    int num = -1;
     if (Serial.available())
         num = Serial.parseInt();
     return num;

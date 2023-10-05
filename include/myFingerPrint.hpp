@@ -14,9 +14,9 @@ enum fingerLocalStatus{
 };
 
 class FingerPrint {
+    Adafruit_Fingerprint finger;
 public:
     FingerPrint();
-    Adafruit_Fingerprint finger;
     void scanFinger();
     void begin(uint16_t baudRate);
     bool enroll(uint8_t id);
@@ -24,8 +24,9 @@ public:
     void getLog();
     bool debugFinger();
     void diagFingerPrint();
-    bool restoreFinger();
+    bool restore();
     void queryFinger();
+
 
 };
 #endif
