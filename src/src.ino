@@ -3,14 +3,21 @@
 #include "myFingerPrint.hpp"
 #include "diag.hpp"
 #include "myRFID.hpp"
+#include "myEEPROM.hpp"
+
 
 
 //my FingerPrint
 FingerPrint myFingerPrint;
 // my RFID
 RFID myRFID;
+
+bool doorStatus = false;
+myEEPROM eeprom;
+
 uint8_t errorCount = 0;
 int8_t task = -1;
+
 void setup() {
   Serial.begin(9600);
   
@@ -21,7 +28,8 @@ void setup() {
   }
 
   myFingerPrint.begin(57600);
-  myRFID.begin();
+  // myRFID.begin();
+  eeprom.begin();
 
 }
 void loop() {
@@ -35,11 +43,7 @@ void loop() {
   switch (task)
   {
   case 1: 
-    Log("Enter ID of your fingerprint to enroll: ");
-    while(id == 0){
-      id = readNumber();
-    }
-    myFingerPrint.enroll(id);
+    myFingerPrint.enroll();
     task = -1;
     break;
   case 2: 
@@ -72,6 +76,10 @@ void loop() {
     myRFID.restore();
     task = -1;
     break;
+  case 8:
+    eeprom.readAll();
+    task = -1;
+    break;
   }
 }
 
@@ -81,7 +89,7 @@ void Log(String log){
 
 int readNumber()
 {
-    int num = -1;
+    int num = 0;
     if (Serial.available())
         num = Serial.parseInt();
     return num;

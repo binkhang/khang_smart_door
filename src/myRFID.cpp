@@ -5,6 +5,7 @@ RFID::RFID() : mfrc522(SS_PIN_HSPI, RST_PIN_HSPI)
     numCards = 0;
 }
 
+RFID::~RFID(){}
 /*-------------Init RFID-------------*/
 void RFID::begin()
 {
@@ -17,6 +18,11 @@ void RFID::begin()
 /*------------Check RFID-------------*/
 void RFID::scanRFID()
 {
+    //Thiếu check khi chưa có thẻ
+    if (cardList == 0){
+
+    }
+    
     if (isCardPresent())
     {
         if (isCardRegistered())
@@ -65,7 +71,7 @@ bool RFID::addCard()
 {
     if (numCards < maxNumCard)
     {
-        Serial.println("Present your card");
+        // Serial.println("Present your card");
         unsigned long startTime = millis();
 
         while (millis() - startTime <= cardTimeout)
@@ -154,5 +160,5 @@ void RFID::printCardList()
 bool RFID::restore(){
     // This method used to delete all registed RFID card
     Serial.println("Successfully delete all you RFID card");
-    
+
 }

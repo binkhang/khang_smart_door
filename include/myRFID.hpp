@@ -22,6 +22,7 @@ public:
     bool addCard();
     bool removeCard();
     bool restore();
+    ~RFID();
     
 private:
     MFRC522 mfrc522;

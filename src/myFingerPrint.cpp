@@ -1,5 +1,11 @@
 #include "myFingerPrint.hpp"
+extern myEEPROM eeprom;
 FingerPrint::FingerPrint() : finger(&Serial2)
+{
+
+}
+
+FingerPrint::~FingerPrint() 
 {
 
 }
@@ -67,9 +73,23 @@ void FingerPrint::scanFinger(){
     return;
   }
 }
-bool FingerPrint::enroll(uint8_t id){
+bool FingerPrint::enroll(){
 
   int status = -1;
+  int id = 0;
+  // temp stage to get ID
+  std::vector<int> FPInUse = getFPInUsed();
+  for (int idx = 1; idx < TotalFP + 1; idx++){
+    if (FPInUse[idx] == 0){
+      id = idx;
+      break;
+    }
+  }
+  if (id == 0){
+    Serial.println("FingerPrint list is fulled");
+    return false;
+  }
+
 
   //first stage: get image
   unsigned int startTime = millis();
@@ -174,8 +194,12 @@ bool FingerPrint::enroll(uint8_t id){
     return false;
   }
 
-  // fourth stage: id into EEPROM
+  // fourth stage: save id into EEPROM
+  
+  eeprom.write(id, id);
+
   // check if num of id in eeprom not match with 
+
   return true;
 }
 
@@ -188,7 +212,8 @@ bool FingerPrint::unEnroll(uint8_t id ){
     Serial.println("Failed to delete model");
     return false;
   }
-  delay(1000);
+  eeprom.write(id,0);
+  delay(500);
   Serial.print("Model # "); Serial.print(id); Serial.println(" has been deleted");
   return true;
 }
@@ -206,10 +231,34 @@ void FingerPrint::diagFingerPrint(){
 
 bool FingerPrint::restore(){
   //This method is used to delete all template (both eeprom and sensor)
+  for (int i = 1; i<TotalFP+1;i++){
+    eeprom.write(i,0);
+  }
   Serial.println("Successfully delete all template");
   return finger.emptyDatabase() == FINGERPRINT_OK;  
 }
 
 void FingerPrint::queryFinger(){
   // This medthod is used to query number of template
+}
+
+std::vector<int> FingerPrint::getFPInUsed(){
+  // This method is used to get the current FP in use
+  std::vector<int> FPIndex(TotalFP + 1);
+  for (int i = 1; i < TotalFP; i++){
+    if (eeprom.read(i) != 0){
+      FPIndex[i]=eeprom.read(i);
+    }
+    else{
+      FPIndex[i]=0;
+    }
+  }
+
+  //Debug
+  
+  // for (int j = 0; j < FPIndex.size(); j++)
+  // {
+  //   Serial.print("Index "); Serial.print(j); Serial.print(" :"); Serial.println(FPIndex[j]);
+  // }
+  return FPIndex;
 }
